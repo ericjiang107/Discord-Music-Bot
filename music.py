@@ -2,6 +2,9 @@ import discord
 from discord.ext import commands
 # access youtube vids:
 import youtube_dl
+# to play audio files:
+from discord import FFmpegPCMAudio
+import random
 
 class music(commands.Cog):
     def __init__(self, client):
@@ -14,11 +17,19 @@ class music(commands.Cog):
             await ctx.send("You're not in a voice channel!")
         voice_channel = ctx.author.voice.channel
         if ctx.voice_client is None:
-            await voice_channel.connect()
+            # random audio array:
+            audio_file = ['Wiiliam_Hello.wav', 'Give_a_dam.wav', 'do-you-like-it.wav', 'you-are-acting-so-weird.wav', 'shes-a-crazy-psycho-2.wav', 'oh-thats-okay.wav']
+            randomized = random.SystemRandom()
+            item = randomized.choice(audio_file)
+            print(item)
+            voice = await voice_channel.connect()
+            # making the bot say something upon entering:
+            source = FFmpegPCMAudio(f'{item}')
+            voice.play(source)
         else:
             await ctx.voice_client.move_to(voice_channel)
 
-    # addcing a "disconnect" command:
+    # adding a "disconnect" command:
     @commands.command()
     async def disconnect(self,ctx):
         await ctx.voice_client.disconnect()
@@ -51,7 +62,6 @@ class music(commands.Cog):
     async def resume(self,ctx):
         await ctx.voice_client.resume()
         await ctx.send("Resume ▶")
-
 
 
 def setup(client):
