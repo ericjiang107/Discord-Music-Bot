@@ -5,10 +5,18 @@ import youtube_dl
 # to play audio files:
 from discord import FFmpegPCMAudio
 import random
+import itertools
+
+repeat = True
 
 class music(commands.Cog):
     def __init__(self, client):
         self.client = client
+
+    # adding a check ping command:
+    @commands.command()
+    async def ping(self,ctx):
+        await ctx.send(f'**Heres the ping!** Latency: {round(commands.Bot.latency * 1000)}ms ')
 
     # adding a "join" command:
     @commands.command()
@@ -18,7 +26,7 @@ class music(commands.Cog):
         voice_channel = ctx.author.voice.channel
         if ctx.voice_client is None:
             # random audio array:
-            audio_file = ['Wiiliam_Hello.wav', 'Give_a_dam.wav', 'do-you-like-it.wav', 'you-are-acting-so-weird.wav', 'shes-a-crazy-psycho-2.wav', 'oh-thats-okay.wav']
+            audio_file = ['1.wav','2.wav','3.wav','4.wav','5.wav','6.wav','7.wav','8.wav','8.wav','9.wav','9.wav','10.wav','11.wav']
             randomized = random.SystemRandom()
             item = randomized.choice(audio_file)
             print(item)
@@ -31,10 +39,11 @@ class music(commands.Cog):
 
     # adding a "disconnect" command:
     @commands.command()
-    async def disconnect(self,ctx):
+    async def d(self,ctx):
         await ctx.voice_client.disconnect()
 
     # playing new song if new song is added:
+
     @commands.command()
     async def play(self,ctx,url):
         ctx.voice_client.stop()
@@ -50,6 +59,21 @@ class music(commands.Cog):
             url2 = info['formats'][0]['url']
             source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
             vc.play(source)
+            await ctx.channel.send('**Now playing** - ' + info.get('title'))
+
+        # adding to queue:
+        # async with ctx.typing():
+        #     player = await music.from_url(queue[0], loop=commands.Bot.loop)
+        #     vc.play(player, after=lambda e: print('Player error: %s' %e) if e else None)
+        # await ctx.send('**Now playing:** {}'.format(player.title))
+        # del(queue[0])
+
+    # adding check queue button:
+    # @commands.command()
+    # async def queue_(self,ctx,url):
+    #     global queue
+    #     queue.append(url)
+    #     await ctx.send(f'`{url}` is added to queue')
 
     # adding pause button:
     @commands.command()
@@ -62,6 +86,17 @@ class music(commands.Cog):
     async def resume(self,ctx):
         await ctx.voice_client.resume()
         await ctx.send("Resume ▶")
+
+    # adding skip button:
+    # @commands.command()
+    # async def skip(self,ctx):
+    #     vc = ctx.voice_client
+    #     if not vc or not vc.is_connected():
+    #         return await ctx.send('Not currently playing anything!', delete_after=20)
+    #     if vc.is_paused():
+    #         pass
+    #     elif not vc.is_playing():
+    #         return
 
 
 def setup(client):
